@@ -1,0 +1,97 @@
+# USER SERVICE
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: user-svc-l5d-header-middleware
+  namespace: shop-app
+spec:
+  headers:
+    customRequestHeaders:
+      l5d-dst-override: "user-svc.shop-app.svc.cluster.local:8080"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: user-svc-strip-prefix-middleware
+  namespace: shop-app
+spec:
+  stripPrefix:
+    prefixes:
+      - /user
+    forceSlash: false
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: user-svc-path-middleware
+spec:
+  chain:
+    middlewares:
+    - name: user-svc-l5d-header-middleware
+    - name: user-svc-strip-prefix-middleware
+---
+# PRODUCT SERVICE
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: product-svc-l5d-header-middleware
+  namespace: shop-app
+spec:
+  headers:
+    customRequestHeaders:
+      l5d-dst-override: "product-svc.shop-app.svc.cluster.local:8080"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: product-svc-strip-prefix-middleware
+  namespace: shop-app
+spec:
+  stripPrefix:
+    prefixes:
+      - /product
+    forceSlash: false
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: product-svc-path-middleware
+spec:
+  chain:
+    middlewares:
+    - name: product-svc-l5d-header-middleware
+    - name: product-svc-strip-prefix-middleware
+---
+
+# REVIEW SERVICE
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: review-svc-l5d-header-middleware
+  namespace: shop-app
+spec:
+  headers:
+    customRequestHeaders:
+      l5d-dst-override: "review-svc.shop-app.svc.cluster.local:8080"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: review-svc-strip-prefix-middleware
+  namespace: shop-app
+spec:
+  stripPrefix:
+    prefixes:
+      - /review
+    forceSlash: false
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: review-svc-path-middleware
+spec:
+  chain:
+    middlewares:
+    - name: review-svc-l5d-header-middleware
+    - name: review-svc-strip-prefix-middleware
+---

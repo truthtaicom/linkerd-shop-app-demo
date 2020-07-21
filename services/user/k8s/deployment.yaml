@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-svc
+  labels:
+    app: user
+    project: shop-app
+spec:
+  selector:
+    app: user
+  ports:
+    - protocol: TCP
+      name: user-svc-port
+      port: 80
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+  labels:
+    app: user
+    project: shop-app
+    app.kubernetes.io/part-of: shop-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user
+      project: shop-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: user
+        project: shop-app
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+        - image: user:latest
+          name: user
+          imagePullPolicy: Never
+          # args: ["prod:user"]
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          ports:
+            - name: user-svc-port
+              containerPort: 8080
+      restartPolicy: Always
+---
