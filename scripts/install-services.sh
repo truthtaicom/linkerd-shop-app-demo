@@ -18,7 +18,7 @@ function buildAndDeploy() {
 
   _out Deploy $1
   cd ${root_folder}/services/$2
-  cat deployment.yaml | linkerd inject - | kubectl -n ${app_name} apply -f -
+  kubectl -n ${app_name} apply -f ./k8s
 }
 
 function setup() {
@@ -28,15 +28,16 @@ function setup() {
   kubectl create ns ${app_name}
   kubectl create ns traefik
 
-  cd ${root_folder}/k8s
-  kubectl apply -f ./dnsutils.yaml
+  # cd ${root_folder}/k8s
+  # kubectl apply -f ./dnsutils.yaml
 
   cd ${root_folder}/k8s/linkerd
   linkerd upgrade --addon-config ./config.yaml | kubectl apply -f -
   # kubectl apply -f ./tracing.yaml
 
   cd ${root_folder}/k8s/traefik
-  cat traefik.yaml | kubectl -n shop-app apply -f -
+  cat ingress-route-definition.yaml | kubectl -n shop-app apply -f -
+  cat deployment.yaml | kubectl -n shop-app apply -f -
   cat middleware.yaml | kubectl -n shop-app apply -f -
   cat ingress.yaml | kubectl -n shop-app apply -f -
 

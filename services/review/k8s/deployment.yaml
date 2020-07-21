@@ -8,10 +8,10 @@ metadata:
 spec:
   selector:
     app: review
-  type: ClusterIP
   ports:
-    - name: review-port
-      port: 8080
+    - protocol: TCP
+      name: review-port
+      port: 80
       targetPort: 8080
 ---
 apiVersion: apps/v1
@@ -37,8 +37,6 @@ spec:
         project: shop-app
       annotations:
         linkerd.io/inject: enabled
-        config.linkerd.io/trace-collector: linkerd-collector.linkerd:55678
-        config.alpha.linkerd.io/trace-collector-service-account: linkerd-collector
     spec:
       dnsPolicy: ClusterFirst
       containers:
@@ -46,9 +44,10 @@ spec:
           name: review
           imagePullPolicy: Never
           readinessProbe:
-            httpGet:
-              path: /ping
+            tcpSocket:
               port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
           ports:
             - name: review-port
               containerPort: 8080

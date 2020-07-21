@@ -21,10 +21,10 @@ router.get("/:id", async ({ response, params }: { response: any, params: any }) 
     console.log("params", params)
     try {
       const productDetail = await ky.get(`https://min-shop.herokuapp.com/rest/product/${params.id}`).json();
-      // const review = await ky.get(`http://review-svc.shop-app:8080/${params.id}`).json();
+      const review = await ky.get(`http://review-svc/${params.id}`).json();
       response.body = {
         data: productDetail,
-        // review
+        review
       }
     } catch(error) {
       console.log(error)

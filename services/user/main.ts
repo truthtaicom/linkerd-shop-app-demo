@@ -7,6 +7,11 @@ const port: number = 8080;
 
 const router = new Router();
 
+router.get("/user/ping", async ({ response }: { response: any }) => {
+  response.status = Status.OK;
+  response.body = 'OK'
+});
+
 router.get("/ping", async ({ response }: { response: any }) => {
   response.status = Status.OK;
 });
@@ -15,9 +20,10 @@ router.get("/product/:id", async ({ response, params }: { response: any, params:
   if (params && params.id) {
     try {
       console.log("params", params)
-      const result = await ky.get(`http://product-svc.shop-app/${params.id}`).json();
+      const result = await ky.get(`http://product-svc/${params.id}`).json();
       response.body = result
     } catch(error) {
+      console.log(error)
       response.status = Status.InternalServerError
       response.body = error
     }

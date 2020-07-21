@@ -1,56 +1,56 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: product-svc
+  name: user-svc
   labels:
-    app: product
+    app: user
     project: shop-app
 spec:
   selector:
-    app: product
-  type: ClusterIP
+    app: user
   ports:
-    - name: product-port
-      port: 8080
+    - protocol: TCP
+      name: user-svc-port
+      port: 80
       targetPort: 8080
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: product-deployment
+  name: user-deployment
   labels:
-    app: product
+    app: user
     project: shop-app
     app.kubernetes.io/part-of: shop-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: product
+      app: user
       project: shop-app
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: product
+        app: user
         project: shop-app
       annotations:
         linkerd.io/inject: enabled
-        config.linkerd.io/trace-collector: linkerd-collector.linkerd:55678
-        config.alpha.linkerd.io/trace-collector-service-account: linkerd-collector
     spec:
       dnsPolicy: ClusterFirst
       containers:
-        - image: product:latest
-          name: product
+        - image: user:latest
+          name: user
           imagePullPolicy: Never
           # args: ["prod:user"]
           readinessProbe:
-            httpGet:
-              path: /ping
+            tcpSocket:
               port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
           ports:
-            - name: product-port
+            - name: user-svc-port
               containerPort: 8080
       restartPolicy: Always
+---

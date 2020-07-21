@@ -8,20 +8,24 @@ Pre-requirement:
 - Keycloak: https://geek-cookbook.funkypenguin.co.nz/recipes/keycloak/
 
 
-```
-kubectl -n shop-app set env --all deploy OC_AGENT_HOST=linkerd-collector.linkerd:55678
-```
-
+To install tracing to linkerd
 ```
 linkerd install --control-plane-tracing --addon-config ./k8s/linkerd/config.yaml | kubectl apply -f -
 ```
 
+To expose Linkerd Dashboard
 ```
 linkerd dashboard -p 12345 &
 ```
 
+To expose Jaeger
 ```
 kubectl -n linkerd port-forward svc/linkerd-jaeger 16686
+```
+
+To expose ports
+```
+kubectl port-forward --address 0.0.0.0 service/traefik 8000:8000 8080:8080 443:4443 -n shop-app
 ```
 
 To get pods
@@ -38,3 +42,13 @@ To get pod's log
 ```
 kubectl logs -n shop-app -c <service> -p <pod_id>
 ```
+
+To do
+ - [x] Service Mesh
+ - [ ] gRPC
+ - [ ] SSL
+ - [ ] Tracing
+ - [ ] Fluend - Elastic Search - Kibana
+ - [ ] Authentication with JWT
+ - [ ] GitOps
+ - [ ] Database

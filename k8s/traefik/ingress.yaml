@@ -10,14 +10,14 @@ spec:
   # entryPoints: []
   routes:
     - kind: Rule
-      match: PathPrefix(`/user`)
+      match: Host(`local.api.bebuy.vn`) && PathPrefix(`/user`)
       priority: 0
       middlewares:
         - name: user-svc-path-middleware
       services:
         - kind: Service
           name: user-svc
-          port: 8080
+          port: 80
     - kind: Rule
       match: PathPrefix(`/product`)
       priority: 0
@@ -26,7 +26,7 @@ spec:
       services:
         - kind: Service
           name: product-svc
-          port: 8080
+          port: 80
     - kind: Rule
       match: PathPrefix(`/review`)
       priority: 0
@@ -35,4 +35,6 @@ spec:
       services:
         - kind: Service
           name: review-svc
-          port: 8080
+          port: 80
+  tls:
+    certResolver: myresolver
