@@ -1,0 +1,38 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  creationTimestamp: null
+  name: shop-app-ingress-route
+  namespace: shop-app
+spec:
+  # entryPoints: []
+  routes:
+    - kind: Rule
+      match: PathPrefix(`/user`)
+      priority: 0
+      middlewares:
+        - name: user-svc-path-middleware
+      services:
+        - kind: Service
+          name: user-svc
+          port: 8080
+    - kind: Rule
+      match: PathPrefix(`/product`)
+      priority: 0
+      middlewares:
+        - name: product-svc-path-middleware
+      services:
+        - kind: Service
+          name: product-svc
+          port: 8080
+    - kind: Rule
+      match: PathPrefix(`/review`)
+      priority: 0
+      middlewares:
+        - name: review-svc-path-middleware
+      services:
+        - kind: Service
+          name: review-svc
+          port: 8080
